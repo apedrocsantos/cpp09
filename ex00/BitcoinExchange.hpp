@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:32 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/14 23:24:19 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/15 11:14:29 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,24 @@ class BitcoinExchange
     int _month;
     int _day;
     float _value;
+    std::string _date;
     std::vector<std::string> _lst;
-    public:
+    
+    float stof(std::string string, bool date);
+    void checkDate(std::string date);
+    void checkValue(std::string value);
+    bool leapYear(int year);
+    void calculate();
     BitcoinExchange();
+    
+    public:
+    BitcoinExchange(std::string input);
     BitcoinExchange(BitcoinExchange const &that);
     BitcoinExchange &operator=(BitcoinExchange const &that);
     ~BitcoinExchange();
     void addToList(std::string string);
     void getList();
-    float stof(std::string string);
-    void checkDate(std::string date);
-    void checkValue(std::string value);
-    bool leapYear(int year);
-    void calculate();
-    void getLine();
+    void run();
 };
 
 #endif
