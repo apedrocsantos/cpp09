@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/15 11:14:05 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/15 11:23:00 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,24 @@ BitcoinExchange::BitcoinExchange(std::string input)
     run();
 }
 
-// BitcoinExchange::BitcoinExchange(BitcoinExchange const &that)
-// {
+BitcoinExchange::BitcoinExchange(BitcoinExchange const &that)
+{
+    *this = that;
+}
 
-// }
-
-// BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &that)
-// {
-
-// }
+BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &that)
+{
+    if (this != &that)
+    {
+        this->_year = that._year;
+        this->_month = that._month;
+        this->_day = that._day;
+        this->_date = that._date;
+        this->_lst.clear();
+        std::copy(that._lst.begin(), that._lst.end(), this->_lst.begin());
+    }
+    return (*this);
+}
 
 BitcoinExchange::~BitcoinExchange()
 {
