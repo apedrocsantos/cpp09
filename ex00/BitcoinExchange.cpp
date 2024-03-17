@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/15 11:23:00 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/17 22:27:02 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,18 @@ void BitcoinExchange::getList()
 
 float BitcoinExchange::stof(std::string string, bool date)
 {
-    (void) date;
     float nb;
     int i = 0;
     std::stringstream ss;
     
+    if (date)
+    {
+        if (string.find('.') != std::string::npos)
+        {
+            std::string error = "Error: bad input => " + this->_date;
+            throw(std::invalid_argument(error));
+        }
+    }
     ss << string;
     ss >> nb;
     while (string[i] && string[i] == ' ')
