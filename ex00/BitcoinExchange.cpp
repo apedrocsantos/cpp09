@@ -6,22 +6,24 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/17 22:27:02 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/18 16:48:22 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
-#include <limits>
+#include <climits>
 #include <cfloat>
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <bits/stdc++.h>
+
 
 BitcoinExchange::BitcoinExchange(std::string input)
 {
     std::string line;
     std::ifstream infile;
-    infile.open(input);
+    infile.open(input.c_str());
     if (!infile)
     {
         std::cerr << "Error: could not open file.\n";
@@ -116,7 +118,7 @@ void BitcoinExchange::checkDate(std::string date)
     std::stringstream ss(date);
     std::getline(ss, string, '-');
     this->_year = static_cast<int>(stof(string, 1));
-    if (this->_year < 2009 || this->_year > 2022)
+    if (this->_year < 2009)
         throw(std::invalid_argument(error));
     std::getline(ss, string, '-');
     this->_month = static_cast<int>(stof(string, 1));
@@ -206,18 +208,11 @@ void BitcoinExchange::calculate()
         std::getline(ss2, newline, '-');
         std::getline(ss, line, ',');
         day = static_cast<int>(BitcoinExchange::stof(newline, 1));
-        if (this->_year >= year)
+        value = BitcoinExchange::stof(line, 0);
+        if (this->_year < year || (this->_year == year && this->_month < month) || (this->_year == year && this->_month == month && this->_day <= day))
         {
-            if (this->_year == year && this->_month >= month)
-            {
-                if (this->_year == year && this->_month == month && this->_day >= day)
-                    value = BitcoinExchange::stof(line, 0);
-                else
-                {
-                    std::cout << this->_date << " => " << this->_value << " = " << this->_value * value << std::endl;
-                    break;
-                }
-            }
+            std::cout << this->_date << " => " <<this->_value << " = " << this->_value * value << std::endl;
+            break;
         }
     }
 }
