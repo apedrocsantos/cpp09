@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/20 15:06:45 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/20 15:48:15 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class PmergeMe
     void check_ordered(std::string lis, T &container);
     unsigned int jacobsthal();
     template <typename T>
-    void recursive(T &container);
+    void recursive(T &container, typename T::iterator it);
     template <typename T>
     void calculate(T &container);
 

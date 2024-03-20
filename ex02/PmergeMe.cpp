@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/20 15:19:29 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/20 15:48:36 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void PmergeMe::check_ordered(std::string list, T &container)
     }
     if (ordered)
                 throw(std::invalid_argument("List is ordered."));
-    recursive(container);
+    recursive(container, container.begin());
     // std::cout << "PRINGINT\n";
     // print_plist(container);
     calculate(container);
@@ -107,15 +107,14 @@ void PmergeMe::calculate(T &container)
 }
 
 template <typename T>
-void PmergeMe::recursive(T &container)
+void PmergeMe::recursive(T &container, typename T::iterator it)
 {
-    static typename T::iterator it = container.begin();
-    if (it->second > (it + 1)->second)
+    if (it + 1 != container.end() && it->second > (it + 1)->second)
         std::iter_swap(it, it-- + 1);
     else
         it++;
-    if (it + 1 != container.end())
-        recursive(container);
+    if (it != container.end() && it + 1 != container.end())
+        recursive(container, it);
 }
 
 unsigned int PmergeMe::jacobsthal()
