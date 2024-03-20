@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/18 16:48:22 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/18 21:02:01 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
 
 
 BitcoinExchange::BitcoinExchange(std::string input)
@@ -121,12 +121,16 @@ void BitcoinExchange::checkDate(std::string date)
     if (this->_year < 2009)
         throw(std::invalid_argument(error));
     std::getline(ss, string, '-');
+    if (string.length() != 2)
+        throw(std::invalid_argument(error));
     this->_month = static_cast<int>(stof(string, 1));
     if (this->_month < 1 || this->_month > 12)
         throw(std::invalid_argument(error));
     if (BitcoinExchange::leapYear(this->_year))
         days[2] = 29;
     std::getline(ss, string, '-');
+    if (string.length() != 2)
+        throw(std::invalid_argument(error));
     this->_day = static_cast<int>(stof(string, 1));
     if (this->_day < 1 || this->_day > days[this->_month])
         throw(std::invalid_argument(error));
@@ -212,7 +216,8 @@ void BitcoinExchange::calculate()
         if (this->_year < year || (this->_year == year && this->_month < month) || (this->_year == year && this->_month == month && this->_day <= day))
         {
             std::cout << this->_date << " => " <<this->_value << " = " << this->_value * value << std::endl;
-            break;
+            return;
         }
     }
+    std::cout << this->_date << " => " <<this->_value << " = " << this->_value * value << std::endl;
 }
