@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/20 15:48:36 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/21 21:47:46 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 PmergeMe::PmergeMe()
 {
     this->_moves = 0;
+    this->_pending = 0;
 }
 
 void PmergeMe::init(std::string list)
@@ -55,6 +56,7 @@ void PmergeMe::check_ordered(std::string list, T &container)
         nb = stoui(number);
         if (!(ss >> number))
         {
+            this->_pending = 1;
             ordered && comp <= stoui(number) == 1 ? ordered = 1 : ordered = 0;
             this->_lonely = stoui(number);
             break;
@@ -64,17 +66,13 @@ void PmergeMe::check_ordered(std::string list, T &container)
             container.push_back(std::make_pair(nb, nb2));
         else
             container.push_back(std::make_pair(nb2, nb));
-        this->_moves++;
         ordered && nb < nb2 && comp <= nb == 1 ? ordered = 1 : ordered = 0;
         comp = nb2;
     }
     if (ordered)
                 throw(std::invalid_argument("List is ordered."));
     recursive(container, container.begin());
-    // std::cout << "PRINGINT\n";
-    // print_plist(container);
     calculate(container);
-    // print_list(this->_deque);
 }
 
 template <typename T>
@@ -87,12 +85,61 @@ void PmergeMe::calculate(T &container)
     
     while (it != container.end())
         ordered.push_back(it++->second);
-    container.push_back(std::make_pair(0, this->_lonely));
     ordered.push_front(container.begin()->first);
-    while (i < container.size())
+    print_plist(container);
+    while (true)
     {
+        i = jacobsthal() - 1;
+        if (i >= container.size())
+        {
+            i = jacobsthal() - 1;
+            while (i >= container.size())
+            {
+                if (i > 10)
+                {
+                    std::cout << "BREAKING\n";
+                    break;
+                }
+                std::cout << i << "\n";
+                i = jacobsthal() - 1;
+            }
+            while (i < container.size())
+            {
+                std::cout << "HH\n";
+                it_o = ordered.begin();
+                while (it_o != ordered.end())
+                {
+                    if (container[i].first < *it_o)
+                    {
+                        ordered.insert(it_o, container[i].first);
+                        break;
+                    }
+                    it_o++;
+                }
+                i = jacobsthal() - 1;
+            }
+            if (this->_pending)
+            {
+                print_list(ordered);
+                it_o = ordered.begin();
+                while (it_o != ordered.end())
+                {
+                    if (this->_lonely < *it_o)
+                    {
+                        ordered.insert(it_o, this->_lonely);
+                        break;
+                    }
+                    if ((it_o + 1) == ordered.end())
+                    {
+                        ordered.insert(it_o + 1, this->_lonely);
+                        break;
+                    }
+                    it_o++;
+                }
+            }
+            break;
+        }
         it_o = ordered.begin();
-        i = jacobsthal();
         while (it_o != ordered.end())
         {
             if (container[i].first < *it_o)
@@ -103,15 +150,19 @@ void PmergeMe::calculate(T &container)
             it_o++;
         }
     }
-    // print_list(ordered);
+    print_list(ordered);
 }
 
 template <typename T>
 void PmergeMe::recursive(T &container, typename T::iterator it)
 {
-    if (it + 1 != container.end() && it->second > (it + 1)->second)
-        std::iter_swap(it, it-- + 1);
-    else
+    if (it != container.end() && it + 1 != container.end() && it->second > (it + 1)->second)
+    {
+        std::iter_swap(it, it + 1);
+        if (it != container.begin())
+            it--;
+    }
+    else if (it != container.end())
         it++;
     if (it != container.end() && it + 1 != container.end())
         recursive(container, it);
@@ -155,8 +206,10 @@ template <typename T>
 void PmergeMe::print_list(T const &container)
 {
     typename T::const_iterator it;
+    std::cout << "PRINTING\n";
     for (it = container.begin(); it != container.end(); it++)
         std::cout << *it << std::endl;
+    std::cout << "FINISHED PRINTING\n";
 }
 
 template <typename T>
