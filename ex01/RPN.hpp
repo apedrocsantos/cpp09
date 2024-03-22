@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 23:08:51 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/18 15:37:23 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/22 23:03:35 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,12 @@
 class RPN
 {
     std::stack<float>_stack;
-    int _result;
-    int _b;
-    int add(int const a, int const b);
-    int subtract(int const a, int const b);
-    int multiply(int const a, int const b);
-    int divide(int const a, int const b);
-    void calculate();
+    std::stack<float> const &getStack() const {return this->_stack;};
     
     public:
-    RPN() {};
     RPN(RPN const &that);
     RPN &operator=(RPN const &that);
+    RPN() {};
     ~RPN() {};
     void run(std::string list);
 };

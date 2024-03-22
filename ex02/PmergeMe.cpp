@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/22 19:07:43 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/22 20:49:15 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,18 +96,20 @@ void PmergeMe::calculate(T &container, U &ordered)
 {
     size_t size = container.size();
     typename T::iterator it = container.begin();
-    typename std::deque<unsigned int>::iterator it_o = ordered.begin();
+    typename std::deque<unsigned int>::iterator it_o;
     int i = 1;
     
     while (it != container.end())
         ordered.push_back(it++->second);
     ordered.push_front(container.begin()->first);
+    it_o = ordered.begin();
     while (true)
     {
         i = jacobsthal(size);
         i--;
         if (i == -2)
             break;
+        it_o = ordered.begin();
         while (it_o != ordered.end())
         {
             if (container[i].first < *it_o)
@@ -115,10 +117,7 @@ void PmergeMe::calculate(T &container, U &ordered)
                 ordered.insert(it_o, container[i].first);
                 break;
             }
-            if (*it_o > container[i].first)
-                it_o++;
-            else
-                it_o--;
+            it_o++;
         }
     }
     if (this->_pending)

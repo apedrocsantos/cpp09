@@ -6,13 +6,24 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 23:08:49 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/18 15:42:19 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/22 23:02:21 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "RPN.hpp"
 
 #include <sstream>
+
+RPN::RPN(RPN const &that)
+{
+    *this = that;
+}
+
+RPN &RPN::operator=(RPN const &that)
+{
+    this->_stack = that.getStack();
+    return *this;
+}
 
 void RPN::run(std::string list)
 {
