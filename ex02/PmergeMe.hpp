@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/21 21:27:47 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/22 19:06:26 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ class PmergeMe
     bool _pending;
     std::deque<std::pair<unsigned int, unsigned int> > _deque;
     std::vector<std::pair<unsigned int, unsigned int> > _vector;
+    std::deque<unsigned int> _ordered_d;
+    std::deque<unsigned int> _ordered_v;
     PmergeMe(PmergeMe const &that);
     PmergeMe &operator=(PmergeMe const &that);
     unsigned int stoui(std::string number);
@@ -33,13 +35,13 @@ class PmergeMe
     void print_list(T const &container);
     template <typename T>
     void print_plist(T const &container);
-    template <typename T>
-    void check_ordered(std::string lis, T &container);
-    unsigned int jacobsthal();
+    template <typename T, typename U>
+    void check_ordered(std::string lis, T &container, U &ordered);
+    int jacobsthal(size_t size);
     template <typename T>
     void recursive(T &container, typename T::iterator it);
-    template <typename T>
-    void calculate(T &container);
+    template <typename T, typename U>
+    void calculate(T &container, U &ordered);
 
     public:
     PmergeMe();

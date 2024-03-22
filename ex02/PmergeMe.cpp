@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/21 21:47:46 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/22 19:07:43 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,28 @@ PmergeMe::PmergeMe()
 
 void PmergeMe::init(std::string list)
 {
+    // int i = 0;
+    // while (i != -1)
+    // {
+    //     i = jacobsthal(4);
+    //     std::cout << i << std::endl;
+    // }
+    // exit(1);
     // Get Time
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    check_ordered(list, this->_deque);
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-    std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
+    // std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    clock_t deque_start = clock();
+    check_ordered(list, this->_deque, this->_ordered_d);
+    clock_t deque_end = clock();
+    double deque_duration = double(deque_end - deque_start) / CLOCKS_PER_SEC * 1e6;
+    std::cout << "Time to process: " << deque_duration << " us" << std::endl;
+    clock_t vector_start = clock();
+    check_ordered(list, this->_vector, this->_ordered_v);
+    clock_t vector_end = clock();
+    double vector_duration = double(vector_end - vector_start) / CLOCKS_PER_SEC * 1e6;
+    std::cout << "Time to process: " << vector_duration << " us" << std::endl;
+    // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
+    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
     // // Get end time
     
     // // // Get time
@@ -37,8 +53,8 @@ void PmergeMe::init(std::string list)
     // // Get end time
 }
 
-template <typename T>
-void PmergeMe::check_ordered(std::string list, T &container)
+template <typename T, typename U>
+void PmergeMe::check_ordered(std::string list, T &container, U &ordered)
 {
     std::deque<int> sorted;
     std::deque<int> pend;
@@ -47,7 +63,7 @@ void PmergeMe::check_ordered(std::string list, T &container)
     unsigned int nb = 0;
     unsigned int nb2 = 0;
     unsigned int comp = 0;
-    bool ordered = 1;
+    bool is_ordered = 1;
 
     while (ss >> number)
     {
@@ -57,7 +73,7 @@ void PmergeMe::check_ordered(std::string list, T &container)
         if (!(ss >> number))
         {
             this->_pending = 1;
-            ordered && comp <= stoui(number) == 1 ? ordered = 1 : ordered = 0;
+            is_ordered && comp <= stoui(number) == 1 ? is_ordered = 1 : is_ordered = 0;
             this->_lonely = stoui(number);
             break;
         }
@@ -66,80 +82,32 @@ void PmergeMe::check_ordered(std::string list, T &container)
             container.push_back(std::make_pair(nb, nb2));
         else
             container.push_back(std::make_pair(nb2, nb));
-        ordered && nb < nb2 && comp <= nb == 1 ? ordered = 1 : ordered = 0;
+        is_ordered && nb < nb2 && comp <= nb == 1 ? is_ordered = 1 : is_ordered = 0;
         comp = nb2;
     }
-    if (ordered)
+    if (is_ordered)
                 throw(std::invalid_argument("List is ordered."));
     recursive(container, container.begin());
-    calculate(container);
+    calculate(container, ordered);
 }
 
-template <typename T>
-void PmergeMe::calculate(T &container)
+template <typename T, typename U>
+void PmergeMe::calculate(T &container, U &ordered)
 {
-    std::deque<unsigned int> ordered;
+    size_t size = container.size();
     typename T::iterator it = container.begin();
-    typename std::deque<unsigned int>::iterator it_o;
-    unsigned int i = 1;
+    typename std::deque<unsigned int>::iterator it_o = ordered.begin();
+    int i = 1;
     
     while (it != container.end())
         ordered.push_back(it++->second);
     ordered.push_front(container.begin()->first);
-    print_plist(container);
     while (true)
     {
-        i = jacobsthal() - 1;
-        if (i >= container.size())
-        {
-            i = jacobsthal() - 1;
-            while (i >= container.size())
-            {
-                if (i > 10)
-                {
-                    std::cout << "BREAKING\n";
-                    break;
-                }
-                std::cout << i << "\n";
-                i = jacobsthal() - 1;
-            }
-            while (i < container.size())
-            {
-                std::cout << "HH\n";
-                it_o = ordered.begin();
-                while (it_o != ordered.end())
-                {
-                    if (container[i].first < *it_o)
-                    {
-                        ordered.insert(it_o, container[i].first);
-                        break;
-                    }
-                    it_o++;
-                }
-                i = jacobsthal() - 1;
-            }
-            if (this->_pending)
-            {
-                print_list(ordered);
-                it_o = ordered.begin();
-                while (it_o != ordered.end())
-                {
-                    if (this->_lonely < *it_o)
-                    {
-                        ordered.insert(it_o, this->_lonely);
-                        break;
-                    }
-                    if ((it_o + 1) == ordered.end())
-                    {
-                        ordered.insert(it_o + 1, this->_lonely);
-                        break;
-                    }
-                    it_o++;
-                }
-            }
+        i = jacobsthal(size);
+        i--;
+        if (i == -2)
             break;
-        }
-        it_o = ordered.begin();
         while (it_o != ordered.end())
         {
             if (container[i].first < *it_o)
@@ -147,10 +115,30 @@ void PmergeMe::calculate(T &container)
                 ordered.insert(it_o, container[i].first);
                 break;
             }
+            if (*it_o > container[i].first)
+                it_o++;
+            else
+                it_o--;
+        }
+    }
+    if (this->_pending)
+    {
+        it_o = ordered.begin();
+        while (it_o != ordered.end())
+        {
+            if (this->_lonely < *it_o)
+            {
+                ordered.insert(it_o, this->_lonely);
+                break;
+            }
+            if ((it_o + 1) == ordered.end())
+            {
+                ordered.insert(it_o + 1, this->_lonely);
+                break;
+            }
             it_o++;
         }
     }
-    print_list(ordered);
 }
 
 template <typename T>
@@ -168,12 +156,13 @@ void PmergeMe::recursive(T &container, typename T::iterator it)
         recursive(container, it);
 }
 
-unsigned int PmergeMe::jacobsthal()
+int PmergeMe::jacobsthal(size_t size)
 {
     // {0, 1, 1, ..., a, b, c}
     static unsigned int a = 1;
     static unsigned int b = 1;
     static unsigned int c = 1;
+    static bool flag = false;
     
     if (c > a)
     {
@@ -181,10 +170,25 @@ unsigned int PmergeMe::jacobsthal()
         if (c > a)
             return (c);
     }
-    c = b + 2 * a;
-    a = b;
-    b = c;
-    return (c);
+    if (!flag)
+    {
+        c = b + 2 * a;
+        a = b;
+        b = c;
+        if (c >= size)
+        {
+            flag = 1;
+            while (c > size)
+                c--;
+        }
+        if (c > a)
+            return (c);
+    }
+    a = 1;
+    b = 1;
+    c = 1;
+    flag = false;
+    return (-1);
 }
 
 unsigned int PmergeMe::stoui(std::string number)
