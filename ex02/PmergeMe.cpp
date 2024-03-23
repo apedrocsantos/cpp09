@@ -6,51 +6,72 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/22 20:49:15 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/23 14:06:47 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+//Check if ordered with repeated numbers
+// List without commas
+// sort pairs
+
 #include "PmergeMe.hpp"
-#include <sstream>
-#include <chrono>
-#include <ctime>    
 
 PmergeMe::PmergeMe()
 {
-    this->_moves = 0;
     this->_pending = 0;
 }
 
-void PmergeMe::init(std::string list)
+void PmergeMe::init(int ac, char **av)
 {
-    // int i = 0;
-    // while (i != -1)
-    // {
-    //     i = jacobsthal(4);
-    //     std::cout << i << std::endl;
-    // }
-    // exit(1);
+    std::string list;
+    if (ac == 2)
+        list = av[1];
     // Get Time
-    // std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    clock_t deque_start = clock();
+    this->_d_begin = get_cur_time();
     check_ordered(list, this->_deque, this->_ordered_d);
-    clock_t deque_end = clock();
-    double deque_duration = double(deque_end - deque_start) / CLOCKS_PER_SEC * 1e6;
-    std::cout << "Time to process: " << deque_duration << " us" << std::endl;
-    clock_t vector_start = clock();
-    check_ordered(list, this->_vector, this->_ordered_v);
-    clock_t vector_end = clock();
-    double vector_duration = double(vector_end - vector_start) / CLOCKS_PER_SEC * 1e6;
-    std::cout << "Time to process: " << vector_duration << " us" << std::endl;
-    // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]" << std::endl;
-    // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
-    // // Get end time
+    this->_d_end = get_cur_time();
     
-    // // // Get time
-    // store_list(list, this->_vector);
-    // print_list(this->_vector);
-    // // Get end time
+    // Get Time
+    this->_v_begin = get_cur_time();
+    check_ordered(list, this->_vector, this->_ordered_v);
+    this->_v_end = get_cur_time();
+
+    print_data();
+    // print_list(this->_ordered_d);
+}
+
+void PmergeMe::print_data()
+{
+    std::cout << "Before:\t";
+    int i = 0;
+    for (i = 0; i < 3 && i < (int)this->_deque.size(); i++)
+    {
+        if (i == 2 && this->_list_size > 5)
+        {
+            std::cout << "[...]";
+            break;
+        }
+        else
+            std::cout << this->_deque[i].first;
+        if (i < 2)
+            std::cout << " " << this->_deque[i].second << " ";
+    }
+    if (i < 3 && this->_pending)
+        std::cout << this->_lonely << " ";
+    std::cout << std::endl;
+    std::cout << "After:\t";
+    for (int i = 0; i < 5 && i < (int)this->_list_size; i++)
+    {
+        if (i == 4 && this->_list_size > 5)
+        {
+            std::cout << "[...]";
+            break;
+        }
+        std::cout << this->_ordered_d[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::deque : " << this->_d_end - this->_d_begin << " us" << std::endl;
+    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::vector : " << this->_v_end - this->_v_begin << " us" << std::endl;
 }
 
 template <typename T, typename U>
@@ -64,14 +85,17 @@ void PmergeMe::check_ordered(std::string list, T &container, U &ordered)
     unsigned int nb2 = 0;
     unsigned int comp = 0;
     bool is_ordered = 1;
-
+    
+    this->_list_size = 0;
     while (ss >> number)
     {
+        this->_list_size += 2;
         if (number[0] == '-')
             throw(std::invalid_argument("Error: invalid argument."));
         nb = stoui(number);
         if (!(ss >> number))
         {
+            this->_list_size--;
             this->_pending = 1;
             is_ordered && comp <= stoui(number) == 1 ? is_ordered = 1 : is_ordered = 0;
             this->_lonely = stoui(number);
@@ -87,7 +111,7 @@ void PmergeMe::check_ordered(std::string list, T &container, U &ordered)
     }
     if (is_ordered)
                 throw(std::invalid_argument("List is ordered."));
-    recursive(container, container.begin());
+    sort_pairs(container);
     calculate(container, ordered);
 }
 
@@ -141,18 +165,46 @@ void PmergeMe::calculate(T &container, U &ordered)
 }
 
 template <typename T>
-void PmergeMe::recursive(T &container, typename T::iterator it)
+void PmergeMe::sort_pairs(T &container)
 {
-    if (it != container.end() && it + 1 != container.end() && it->second > (it + 1)->second)
-    {
-        std::iter_swap(it, it + 1);
-        if (it != container.begin())
-            it--;
+    // if (it != container.end() && it + 1 != container.end() && it->second > (it + 1)->second)
+    // {
+    //     std::iter_swap(it, it + 1);
+    //     if (it != container.begin())
+    //         it--;
+    // }
+    // else if (it != container.end())
+    //     it++;
+    // if (it != container.end() && it + 1 != container.end())
+    //     sort_pairs(container, it);
+    if (container.size() <= 1) {
+        return; // Base case: Nothing to sort
     }
-    else if (it != container.end())
-        it++;
-    if (it != container.end() && it + 1 != container.end())
-        recursive(container, it);
+
+    // Divide the vector into two halves
+    std::deque<std::pair<unsigned int, unsigned int> > leftHalf(container.begin(), container.begin() + container.size() / 2);
+    std::deque<std::pair<unsigned int, unsigned int> > rightHalf(container.begin() + container.size() / 2, container.end());
+
+    // Recursively sort the two halves
+    sort_pairs(leftHalf);
+    sort_pairs(rightHalf);
+
+    // Merge the sorted halves
+    size_t leftIdx = 0;
+    size_t rightIdx = 0;
+    size_t idx = 0;
+
+    while (leftIdx < leftHalf.size() && rightIdx < rightHalf.size()) {
+        container[idx++] = leftHalf[leftIdx].second < rightHalf[rightIdx].second ? leftHalf[leftIdx++] : rightHalf[rightIdx++];
+    }
+
+    while (leftIdx < leftHalf.size()) {
+        container[idx++] = leftHalf[leftIdx++];
+    }
+
+    while (rightIdx < rightHalf.size()) {
+        container[idx++] = rightHalf[rightIdx++];
+    }
 }
 
 int PmergeMe::jacobsthal(size_t size)
@@ -211,8 +263,8 @@ void PmergeMe::print_list(T const &container)
     typename T::const_iterator it;
     std::cout << "PRINTING\n";
     for (it = container.begin(); it != container.end(); it++)
-        std::cout << *it << std::endl;
-    std::cout << "FINISHED PRINTING\n";
+        std::cout << *it << " ";
+    std::cout << std::endl << "FINISHED PRINTING\n";
 }
 
 template <typename T>
@@ -221,4 +273,12 @@ void PmergeMe::print_plist(T const &container)
     typename T::const_iterator it;
     for (it = container.begin(); it != container.end(); it++)
         std::cout << it->first << "," << it->second << std::endl;
+}
+
+suseconds_t PmergeMe::get_cur_time()
+{
+    struct timeval tv;
+    
+    gettimeofday(&tv, NULL);
+    return (tv.tv_sec * 1000000 + tv.tv_usec);
 }

@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:48 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/19 15:27:00 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/23 13:16:59 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int main(int ac, char **av)
     }
     try
     {
-        pm.init(av[1]);
+        pm.init(ac, av);
     }
     catch(const std::exception& e)
     {

@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/18 21:02:01 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/23 14:15:33 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,8 @@ void BitcoinExchange::checkDate(std::string date)
     int days[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     std::string string;
     std::string error = "Error: bad input => " + date;
+    if (date.length() != 10)
+        throw(std::invalid_argument(error));
     std::stringstream ss(date);
     std::getline(ss, string, '-');
     this->_year = static_cast<int>(stof(string, 1));
