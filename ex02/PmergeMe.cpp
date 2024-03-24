@@ -6,13 +6,14 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/24 17:16:15 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/24 18:05:22 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // List without commas
 // sort pairs
 // ./PmergeMe "2 1" -> Before: list error
+// Crash it_o ???
 
 #include "PmergeMe.hpp"
 
@@ -151,7 +152,7 @@ void PmergeMe::calculate(T &container, U &ordered)
         if (i == -1)
             break;
         i--;
-        // it_o = ordered.begin();
+        it_o = ordered.begin();
         while (it_o != ordered.end())
         {
             while (container[i].first > *it_o && it_o != ordered.end())
@@ -163,7 +164,8 @@ void PmergeMe::calculate(T &container, U &ordered)
                     it_o--;
                 break;
             }
-            it_o--;
+            if(it_o != ordered.begin())
+                it_o--;
         }
     }
     if (this->_pending)
