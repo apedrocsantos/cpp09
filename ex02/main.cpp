@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:48 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/23 13:16:59 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/24 15:50:35 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 int main(int ac, char **av)
 {
     PmergeMe pm;
-    if (ac != 2)
+    if (ac < 2)
     {
         std::cout << "Error: invalid command. Use ./PmergeMe [list of ints]\n";
         return 0;
     }
     try
     {
-        pm.init(ac, av);
+        pm.init(ac, ++av);
     }
     catch(const std::exception& e)
     {

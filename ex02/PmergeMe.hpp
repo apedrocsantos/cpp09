@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/23 14:05:15 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/24 15:54:50 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class PmergeMe
     size_t _list_size;
     unsigned int _lonely;
     bool _pending;
+    std::vector<int> _init_list;
     std::deque<std::pair<unsigned int, unsigned int> > _deque;
     std::vector<std::pair<unsigned int, unsigned int> > _vector;
     std::deque<unsigned int> _ordered_d;
@@ -36,19 +37,16 @@ class PmergeMe
     PmergeMe(PmergeMe const &that);
     PmergeMe &operator=(PmergeMe const &that);
     unsigned int stoui(std::string number);
-    template <typename T>
-    void print_list(T const &container);
-    template <typename T>
-    void print_plist(T const &container);
-    template <typename T, typename U>
-    void check_ordered(std::string lis, T &container, U &ordered);
+    template <typename T> void print_list(T const &container);
+    template <typename T> void print_plist(T const &container);
+    template <typename T, typename U> void check_ordered(int ac, char **av, T &container, U &ordered);
     int jacobsthal(size_t size);
-    template <typename T>
-    void sort_pairs(T &container);
-    template <typename T, typename U>
-    void calculate(T &container, U &ordered);
+    template <typename T> void sort_pairs(T &container);
+    template <typename T, typename U> void calculate(T &container, U &ordered);
     suseconds_t get_cur_time();
     void print_data();
+    template <typename T> void order1(char **av, T &container);
+    template <typename T> void order2(char **av, T &container);
 
     public:
     PmergeMe();

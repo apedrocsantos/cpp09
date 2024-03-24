@@ -6,85 +6,59 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/23 14:06:47 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/24 17:16:15 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//Check if ordered with repeated numbers
 // List without commas
 // sort pairs
+// ./PmergeMe "2 1" -> Before: list error
 
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe()
-{
-    this->_pending = 0;
-}
+PmergeMe::PmergeMe() : _pending(0) {}
 
 void PmergeMe::init(int ac, char **av)
 {
     std::string list;
     if (ac == 2)
         list = av[1];
-    // Get Time
+    
     this->_d_begin = get_cur_time();
-    check_ordered(list, this->_deque, this->_ordered_d);
+    check_ordered(ac, av, this->_deque, this->_ordered_d);
     this->_d_end = get_cur_time();
     
-    // Get Time
     this->_v_begin = get_cur_time();
-    check_ordered(list, this->_vector, this->_ordered_v);
+    check_ordered(ac, av, this->_vector, this->_ordered_v);
     this->_v_end = get_cur_time();
 
     print_data();
     // print_list(this->_ordered_d);
 }
 
-void PmergeMe::print_data()
+template <typename T, typename U>
+void PmergeMe::check_ordered(int ac, char **av, T &container, U &ordered)
 {
-    std::cout << "Before:\t";
-    int i = 0;
-    for (i = 0; i < 3 && i < (int)this->_deque.size(); i++)
-    {
-        if (i == 2 && this->_list_size > 5)
-        {
-            std::cout << "[...]";
-            break;
-        }
-        else
-            std::cout << this->_deque[i].first;
-        if (i < 2)
-            std::cout << " " << this->_deque[i].second << " ";
-    }
-    if (i < 3 && this->_pending)
-        std::cout << this->_lonely << " ";
-    std::cout << std::endl;
-    std::cout << "After:\t";
-    for (int i = 0; i < 5 && i < (int)this->_list_size; i++)
-    {
-        if (i == 4 && this->_list_size > 5)
-        {
-            std::cout << "[...]";
-            break;
-        }
-        std::cout << this->_ordered_d[i] << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::deque : " << this->_d_end - this->_d_begin << " us" << std::endl;
-    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::vector : " << this->_v_end - this->_v_begin << " us" << std::endl;
+    (void) ac;
+    (void) av;
+    if (ac == 2)
+        order1(av, container);
+    else
+        order2(av, container);
+    sort_pairs(container);
+    calculate(container, ordered);
 }
 
-template <typename T, typename U>
-void PmergeMe::check_ordered(std::string list, T &container, U &ordered)
+template <typename T>
+void PmergeMe::order1(char **av, T &container)
 {
-    std::deque<int> sorted;
-    std::deque<int> pend;
-    std::stringstream ss(list);
+    std::stringstream ss(av[1]);
     std::string number;
     unsigned int nb = 0;
     unsigned int nb2 = 0;
     unsigned int comp = 0;
     bool is_ordered = 1;
+    int counter = -1;
     
     this->_list_size = 0;
     while (ss >> number)
@@ -93,6 +67,8 @@ void PmergeMe::check_ordered(std::string list, T &container, U &ordered)
         if (number[0] == '-')
             throw(std::invalid_argument("Error: invalid argument."));
         nb = stoui(number);
+        if (++counter < 7)
+            this->_init_list.push_back(nb);
         if (!(ss >> number))
         {
             this->_list_size--;
@@ -102,17 +78,59 @@ void PmergeMe::check_ordered(std::string list, T &container, U &ordered)
             break;
         }
         nb2 = stoui(number);
+        if (++counter < 6)
+            this->_init_list.push_back(nb2);
         if (nb <= nb2)
             container.push_back(std::make_pair(nb, nb2));
         else
             container.push_back(std::make_pair(nb2, nb));
-        is_ordered && nb < nb2 && comp <= nb == 1 ? is_ordered = 1 : is_ordered = 0;
+        is_ordered && nb <= nb2 && comp <= nb == 1 ? is_ordered = 1 : is_ordered = 0;
         comp = nb2;
     }
     if (is_ordered)
                 throw(std::invalid_argument("List is ordered."));
-    sort_pairs(container);
-    calculate(container, ordered);
+}
+
+template <typename T>
+void PmergeMe::order2(char **av, T &container)
+{
+    unsigned int nb = 0;
+    unsigned int nb2 = 0;
+    unsigned int comp = 0;
+    bool is_ordered = 1;
+    int i = 0;
+    int counter = -1;
+    
+    this->_list_size = 0;
+    while (av[i])
+    {
+        this->_list_size += 2;
+        if (av[i][0] == '-')
+            throw(std::invalid_argument("Error: invalid argument."));
+        nb = stoui(av[i]);
+        if (++counter < 7)
+            this->_init_list.push_back(nb);
+        if (!av[i + 1])
+        {
+            this->_list_size--;
+            this->_pending = 1;
+            is_ordered && comp <= stoui(av[i]) == 1 ? is_ordered = 1 : is_ordered = 0;
+            this->_lonely = stoui(av[i]);
+            break;
+        }
+        nb2 = stoui(av[i + 1]);
+        if (++counter < 6)
+            this->_init_list.push_back(nb2);
+        if (nb <= nb2)
+            container.push_back(std::make_pair(nb, nb2));
+        else
+            container.push_back(std::make_pair(nb2, nb));
+        is_ordered && nb <= nb2 && comp <= nb == 1 ? is_ordered = 1 : is_ordered = 0;
+        comp = nb2;
+        i += 2;
+    }
+    if (is_ordered)
+                throw(std::invalid_argument("List is ordered."));
 }
 
 template <typename T, typename U>
@@ -130,18 +148,22 @@ void PmergeMe::calculate(T &container, U &ordered)
     while (true)
     {
         i = jacobsthal(size);
-        i--;
-        if (i == -2)
+        if (i == -1)
             break;
-        it_o = ordered.begin();
+        i--;
+        // it_o = ordered.begin();
         while (it_o != ordered.end())
         {
-            if (container[i].first < *it_o)
+            while (container[i].first > *it_o && it_o != ordered.end())
+                it_o++;
+            if (container[i].first <= *it_o && (it_o == ordered.begin() || container[i].first > *(it_o - 1)))
             {
                 ordered.insert(it_o, container[i].first);
+                if(it_o != ordered.begin())
+                    it_o--;
                 break;
             }
-            it_o++;
+            it_o--;
         }
     }
     if (this->_pending)
@@ -281,4 +303,32 @@ suseconds_t PmergeMe::get_cur_time()
     
     gettimeofday(&tv, NULL);
     return (tv.tv_sec * 1000000 + tv.tv_usec);
+}
+
+void PmergeMe::print_data()
+{
+    std::cout << "Before:\t";
+    for (int i = 0; i < 5 && i < (int)this->_list_size; i++)
+    {
+        if (i == 4 && this->_list_size > 5)
+        {
+            std::cout << "[...]";
+            break;
+        }
+        std::cout << this->_init_list[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "After:\t";
+    for (int i = 0; i < 5 && i < (int)this->_list_size; i++)
+    {
+        if (i == 4 && this->_list_size > 5)
+        {
+            std::cout << "[...]";
+            break;
+        }
+        std::cout << this->_ordered_d[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::vector : " << this->_v_end - this->_v_begin << " us" << std::endl;
+    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::deque : " << this->_d_end - this->_d_begin << " us" << std::endl;
 }
