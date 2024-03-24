@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/24 15:54:50 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/24 23:30:09 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,14 @@ class PmergeMe
     unsigned int stoui(std::string number);
     template <typename T> void print_list(T const &container);
     template <typename T> void print_plist(T const &container);
-    template <typename T, typename U> void check_ordered(int ac, char **av, T &container, U &ordered);
+    template <typename T, typename U> void get_list(int ac, char **av, T &container, U &ordered);
     int jacobsthal(size_t size);
     template <typename T> void sort_pairs(T &container);
     template <typename T, typename U> void calculate(T &container, U &ordered);
     suseconds_t get_cur_time();
     void print_data();
-    template <typename T> void order1(char **av, T &container);
-    template <typename T> void order2(char **av, T &container);
+    template <typename T> void type1(char **av, T &container);
+    template <typename T> void type2(char **av, T &container);
 
     public:
     PmergeMe();

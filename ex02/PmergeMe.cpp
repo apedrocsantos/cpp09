@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/24 18:05:22 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/24 23:37:59 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,32 +26,34 @@ void PmergeMe::init(int ac, char **av)
         list = av[1];
     
     this->_d_begin = get_cur_time();
-    check_ordered(ac, av, this->_deque, this->_ordered_d);
+    get_list(ac, av, this->_deque, this->_ordered_d);
     this->_d_end = get_cur_time();
+    std::cout << "DEQUE OK\n";
     
     this->_v_begin = get_cur_time();
-    check_ordered(ac, av, this->_vector, this->_ordered_v);
+    get_list(ac, av, this->_vector, this->_ordered_v);
     this->_v_end = get_cur_time();
-
+    std::cout << "VECTOR OK\n";
+    
     print_data();
     // print_list(this->_ordered_d);
 }
 
 template <typename T, typename U>
-void PmergeMe::check_ordered(int ac, char **av, T &container, U &ordered)
+void PmergeMe::get_list(int ac, char **av, T &container, U &ordered)
 {
     (void) ac;
     (void) av;
     if (ac == 2)
-        order1(av, container);
+        type1(av, container);
     else
-        order2(av, container);
+        type2(av, container);
     sort_pairs(container);
     calculate(container, ordered);
 }
 
 template <typename T>
-void PmergeMe::order1(char **av, T &container)
+void PmergeMe::type1(char **av, T &container)
 {
     std::stringstream ss(av[1]);
     std::string number;
@@ -93,7 +95,7 @@ void PmergeMe::order1(char **av, T &container)
 }
 
 template <typename T>
-void PmergeMe::order2(char **av, T &container)
+void PmergeMe::type2(char **av, T &container)
 {
     unsigned int nb = 0;
     unsigned int nb2 = 0;
