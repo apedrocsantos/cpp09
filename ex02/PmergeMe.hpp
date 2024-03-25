@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/24 23:30:09 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/25 16:22:27 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class PmergeMe
     std::deque<std::pair<unsigned int, unsigned int> > _deque;
     std::vector<std::pair<unsigned int, unsigned int> > _vector;
     std::deque<unsigned int> _ordered_d;
-    std::deque<unsigned int> _ordered_v;
+    std::vector<unsigned int> _ordered_v;
     suseconds_t _d_begin;
     suseconds_t _d_end;
     suseconds_t _v_begin;
@@ -45,8 +45,7 @@ class PmergeMe
     template <typename T, typename U> void calculate(T &container, U &ordered);
     suseconds_t get_cur_time();
     void print_data();
-    template <typename T> void type1(char **av, T &container);
-    template <typename T> void type2(char **av, T &container);
+    template <typename T> void get_vals(char **av, T &container);
 
     public:
     PmergeMe();

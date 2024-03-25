@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/24 23:37:59 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/25 17:51:46 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,27 +16,29 @@
 // Crash it_o ???
 
 #include "PmergeMe.hpp"
+#include <ctime>
+#include <iomanip>
 
 PmergeMe::PmergeMe() : _pending(0) {}
 
 void PmergeMe::init(int ac, char **av)
 {
-    std::string list;
-    if (ac == 2)
-        list = av[1];
-    
+    std::clock_t start = std::clock();
     this->_d_begin = get_cur_time();
     get_list(ac, av, this->_deque, this->_ordered_d);
     this->_d_end = get_cur_time();
-    std::cout << "DEQUE OK\n";
+    double _time = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
+    std::cout << "DEQUE OK: " << std::fixed << std::setprecision(5) << _time << " us\n";
     
+    start = std::clock();
     this->_v_begin = get_cur_time();
     get_list(ac, av, this->_vector, this->_ordered_v);
     this->_v_end = get_cur_time();
-    std::cout << "VECTOR OK\n";
+    _time = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
+    std::cout << "VECTOR OK: " << std::fixed << std::setprecision(5) << _time << " us\n";
     
     print_data();
-    // print_list(this->_ordered_d);
+    print_list(this->_ordered_v);
 }
 
 template <typename T, typename U>
@@ -44,58 +46,13 @@ void PmergeMe::get_list(int ac, char **av, T &container, U &ordered)
 {
     (void) ac;
     (void) av;
-    if (ac == 2)
-        type1(av, container);
-    else
-        type2(av, container);
+    get_vals(av, container);
     sort_pairs(container);
     calculate(container, ordered);
 }
 
 template <typename T>
-void PmergeMe::type1(char **av, T &container)
-{
-    std::stringstream ss(av[1]);
-    std::string number;
-    unsigned int nb = 0;
-    unsigned int nb2 = 0;
-    unsigned int comp = 0;
-    bool is_ordered = 1;
-    int counter = -1;
-    
-    this->_list_size = 0;
-    while (ss >> number)
-    {
-        this->_list_size += 2;
-        if (number[0] == '-')
-            throw(std::invalid_argument("Error: invalid argument."));
-        nb = stoui(number);
-        if (++counter < 7)
-            this->_init_list.push_back(nb);
-        if (!(ss >> number))
-        {
-            this->_list_size--;
-            this->_pending = 1;
-            is_ordered && comp <= stoui(number) == 1 ? is_ordered = 1 : is_ordered = 0;
-            this->_lonely = stoui(number);
-            break;
-        }
-        nb2 = stoui(number);
-        if (++counter < 6)
-            this->_init_list.push_back(nb2);
-        if (nb <= nb2)
-            container.push_back(std::make_pair(nb, nb2));
-        else
-            container.push_back(std::make_pair(nb2, nb));
-        is_ordered && nb <= nb2 && comp <= nb == 1 ? is_ordered = 1 : is_ordered = 0;
-        comp = nb2;
-    }
-    if (is_ordered)
-                throw(std::invalid_argument("List is ordered."));
-}
-
-template <typename T>
-void PmergeMe::type2(char **av, T &container)
+void PmergeMe::get_vals(char **av, T &container)
 {
     unsigned int nb = 0;
     unsigned int nb2 = 0;
@@ -111,7 +68,7 @@ void PmergeMe::type2(char **av, T &container)
         if (av[i][0] == '-')
             throw(std::invalid_argument("Error: invalid argument."));
         nb = stoui(av[i]);
-        if (++counter < 7)
+        if (++counter < 6)
             this->_init_list.push_back(nb);
         if (!av[i + 1])
         {
@@ -136,17 +93,73 @@ void PmergeMe::type2(char **av, T &container)
                 throw(std::invalid_argument("List is ordered."));
 }
 
+template <typename T>
+void PmergeMe::sort_pairs(T &container)
+{
+    static int j = 1;
+    // std::cout << "j " << j << std::endl;
+    if (container.size() <= 1 || j >= (int)container.size())
+        return;
+    // if (j < container.size() && j + 1 != container.size() && container[j].second > container[j + 1].second)
+    // {
+    //     std::iter_swap(container[j], container[j + 1]);
+    //     if (j > 0)
+    //         j--;
+    // }
+    // else if (j < container.size())
+    //     j++;
+    // if (j < container.size() && j + 1 != container.size())
+    //     sort_pairs(container, j);
+
+    size_t i = 1;
+    for (i = 1; i < container.size() - 1; i++)
+    {
+        if (container[i].second > container[j].second) {
+			std::swap(container[i], container[j]);
+            std::cout << "swapping {" << container[i].first << "," << container[i].second << "} with {" << container[j].first << "," << container[j].second << "}\n";
+		}
+    }
+    j++;
+    sort_pairs(container);
+    // //Divide the vector into two halves
+    // std::deque<std::pair<unsigned int, unsigned int> > leftHalf(container.begin(), container.begin() + container.size() / 2);
+    // std::deque<std::pair<unsigned int, unsigned int> > rightHalf(container.begin() + container.size() / 2, container.end());
+
+    // // Recursively sort the two halves
+    // sort_pairs(leftHalf);
+    // sort_pairs(rightHalf);
+
+    // // Merge the sorted halves
+    // size_t leftIdx = 0;
+    // size_t rightIdx = 0;
+    // size_t idx = 0;
+
+    // while (leftIdx < leftHalf.size() && rightIdx < rightHalf.size()) {
+    //     container[idx++] = leftHalf[leftIdx].second < rightHalf[rightIdx].second ? leftHalf[leftIdx++] : rightHalf[rightIdx++];
+    // }
+
+    // while (leftIdx < leftHalf.size()) {
+    //     container[idx++] = leftHalf[leftIdx++];
+    // }
+
+    // while (rightIdx < rightHalf.size()) {
+    //     container[idx++] = rightHalf[rightIdx++];
+    // }
+}
+
+
+
 template <typename T, typename U>
 void PmergeMe::calculate(T &container, U &ordered)
 {
     size_t size = container.size();
     typename T::iterator it = container.begin();
-    typename std::deque<unsigned int>::iterator it_o;
+    typename U::iterator it_o;
     int i = 1;
     
     while (it != container.end())
         ordered.push_back(it++->second);
-    ordered.push_front(container.begin()->first);
+    ordered.insert(ordered.begin(), container.begin()->first);
     it_o = ordered.begin();
     while (true)
     {
@@ -154,25 +167,22 @@ void PmergeMe::calculate(T &container, U &ordered)
         if (i == -1)
             break;
         i--;
-        it_o = ordered.begin();
         while (it_o != ordered.end())
         {
             while (container[i].first > *it_o && it_o != ordered.end())
                 it_o++;
-            if (container[i].first <= *it_o && (it_o == ordered.begin() || container[i].first > *(it_o - 1)))
+            if (container[i].first <= *it_o || it_o == ordered.end())
             {
                 ordered.insert(it_o, container[i].first);
+                it_o = ordered.begin();
                 if(it_o != ordered.begin())
                     it_o--;
                 break;
             }
-            if(it_o != ordered.begin())
-                it_o--;
         }
     }
     if (this->_pending)
     {
-        it_o = ordered.begin();
         while (it_o != ordered.end())
         {
             if (this->_lonely < *it_o)
@@ -187,49 +197,6 @@ void PmergeMe::calculate(T &container, U &ordered)
             }
             it_o++;
         }
-    }
-}
-
-template <typename T>
-void PmergeMe::sort_pairs(T &container)
-{
-    // if (it != container.end() && it + 1 != container.end() && it->second > (it + 1)->second)
-    // {
-    //     std::iter_swap(it, it + 1);
-    //     if (it != container.begin())
-    //         it--;
-    // }
-    // else if (it != container.end())
-    //     it++;
-    // if (it != container.end() && it + 1 != container.end())
-    //     sort_pairs(container, it);
-    if (container.size() <= 1) {
-        return; // Base case: Nothing to sort
-    }
-
-    // Divide the vector into two halves
-    std::deque<std::pair<unsigned int, unsigned int> > leftHalf(container.begin(), container.begin() + container.size() / 2);
-    std::deque<std::pair<unsigned int, unsigned int> > rightHalf(container.begin() + container.size() / 2, container.end());
-
-    // Recursively sort the two halves
-    sort_pairs(leftHalf);
-    sort_pairs(rightHalf);
-
-    // Merge the sorted halves
-    size_t leftIdx = 0;
-    size_t rightIdx = 0;
-    size_t idx = 0;
-
-    while (leftIdx < leftHalf.size() && rightIdx < rightHalf.size()) {
-        container[idx++] = leftHalf[leftIdx].second < rightHalf[rightIdx].second ? leftHalf[leftIdx++] : rightHalf[rightIdx++];
-    }
-
-    while (leftIdx < leftHalf.size()) {
-        container[idx++] = leftHalf[leftIdx++];
-    }
-
-    while (rightIdx < rightHalf.size()) {
-        container[idx++] = rightHalf[rightIdx++];
     }
 }
 

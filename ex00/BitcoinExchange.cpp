@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/23 14:15:33 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/25 17:01:23 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,15 @@ BitcoinExchange::BitcoinExchange(std::string input)
 {
     std::string line;
     std::ifstream infile;
+    std::ifstream datafile;
     infile.open(input.c_str());
-    if (!infile)
+    datafile.open("data.csv");
+    if (!infile || !datafile)
     {
-        std::cerr << "Error: could not open file.\n";
+        std::cerr << "Error: could not open file(s).\n";
         return;
     }
+    datafile.close();
     std::getline(infile, line);
     while (std::getline(infile, line))
     {
