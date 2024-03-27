@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/25 16:22:27 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:01:31 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class PmergeMe
 
     public:
     PmergeMe();
-    ~PmergeMe() {};
+    ~PmergeMe();
     void init(int ac, char **av);
 };
 

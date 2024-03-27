@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 23:08:51 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/23 14:17:56 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:02:50 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ class RPN
 {
     std::stack<float>_stack;
     std::stack<float> const &getStack() const {return this->_stack;};
-    RPN() {};
     
     public:
+    RPN();
     RPN(RPN const &that);
     RPN &operator=(RPN const &that);
-    ~RPN() {};
+    ~RPN();
     void run(std::string list);
 };
 

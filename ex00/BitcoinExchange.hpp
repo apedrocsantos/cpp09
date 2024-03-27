@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:32 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/27 09:23:15 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:07:47 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #define BITCOINEXCHANGE_HPP
 
 #include <iostream>
-#include <vector>
+#include <list>
 
 class BitcoinExchange
 {
@@ -26,7 +26,7 @@ class BitcoinExchange
     int _cur_day;
     float _value;
     std::string _date;
-    std::vector<std::string> _lst;
+    std::list<std::string> _lst;
     
     float stof(std::string string, bool date);
     void checkDate(std::string date);

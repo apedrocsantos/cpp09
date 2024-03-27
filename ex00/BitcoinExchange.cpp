@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/27 11:32:14 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:27:17 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include <sstream>
 #include <fstream>
 #include <string>
-// #include <bits/stdc++.h>
 
 
 BitcoinExchange::BitcoinExchange(std::string input)
@@ -80,7 +79,7 @@ void BitcoinExchange::addToList(std::string string)
 
 void BitcoinExchange::getList()
 {
-    std::vector<std::string>::iterator it;
+    std::list<std::string>::iterator it;
     for (it = this->_lst.begin(); it != this->_lst.end(); it++)
         std::cout << (*it) << std::endl;
 }
@@ -112,9 +111,7 @@ float BitcoinExchange::stof(std::string string, bool date)
     if (nb < 0)
         throw(std::invalid_argument("Error: not a positive number."));
     if (nb == 0 && date)
-    {
         throw(std::invalid_argument("Error: bad input => " + this->_date));
-    }
     if (nb == 0)
         throw(std::invalid_argument("Error: bad input => " + string));
     return (nb);
@@ -129,8 +126,10 @@ void BitcoinExchange::checkDate(std::string date)
         throw(std::invalid_argument(error));
     std::stringstream ss(date);
     std::getline(ss, string, '-');
+    if (string.length() != 4)
+        throw(std::invalid_argument(error));
     this->_year = static_cast<int>(stof(string, 1));
-    if (this->_year < 2009)
+    if (this->_year < 2009 || (this->_year == 2009 && this->_day < 02))
         throw(std::invalid_argument(error));
     std::getline(ss, string, '-');
     if (string.length() != 2)
@@ -167,7 +166,7 @@ bool BitcoinExchange::leapYear(int year)
 void BitcoinExchange::run()
 {
     std::string string;
-    std::vector<std::string>::iterator it;
+    std::list<std::string>::iterator it;
     for (it = this->_lst.begin(); it != this->_lst.end(); it++)
     {
         std::stringstream ss(*it);
@@ -205,10 +204,11 @@ void BitcoinExchange::run()
 
 void BitcoinExchange::calculate()
 {
-    int year;
-    int month;
-    int day;
+    int year = 0;
+    int month = 0;
+    int day = 0;
     float value;
+    float temp_value;
     std::string line;
     std::string newline;
     std::ifstream infile;
@@ -217,22 +217,31 @@ void BitcoinExchange::calculate()
     std::getline(infile, line);
     while (std::getline(infile, line))
     {
-        std::stringstream ss(line);
-        std::getline(ss, line, ',');
-        std::stringstream ss2(line);
-        std::getline(ss2, newline, '-');
-        year = static_cast<int>(BitcoinExchange::stof(newline, 1));
-        std::getline(ss2, newline, '-');
-        month = static_cast<int>(BitcoinExchange::stof(newline, 1));
-        std::getline(ss2, newline, '-');
-        std::getline(ss, line, ',');
-        day = static_cast<int>(BitcoinExchange::stof(newline, 1));
-        value = BitcoinExchange::stof(line, 0);
-        if (this->_year < year || (this->_year == year && this->_month < month) || (this->_year == year && this->_month == month && this->_day <= day))
+        if (this->_year < year || (this->_year == year && this->_month < month) || (this->_year == year && this->_month == month && this->_day < day))
+        {
+            std::cout << this->_date << " => " <<this->_value << " = " << this->_value * temp_value << std::endl;
+            return;
+        }
+        else if (this->_year == year && this->_month == month && this->_day == day)
         {
             std::cout << this->_date << " => " <<this->_value << " = " << this->_value * value << std::endl;
             return;
         }
+        else
+        {
+            std::stringstream ss(line);
+            std::getline(ss, line, ',');
+            std::stringstream ss2(line);
+            std::getline(ss2, newline, '-');
+            year = static_cast<int>(BitcoinExchange::stof(newline, 1));
+            std::getline(ss2, newline, '-');
+            month = static_cast<int>(BitcoinExchange::stof(newline, 1));
+            std::getline(ss2, newline, '-');
+            std::getline(ss, line, ',');
+            day = static_cast<int>(BitcoinExchange::stof(newline, 1));
+            temp_value = value;
+            value = BitcoinExchange::stof(line, 0);
+        }
     }
-    std::cout << this->_date << " => " <<this->_value << " = " << this->_value * value << std::endl;
+    std::cout << this->_date << " => " << this->_value << " = " << this->_value * value << std::endl;
 }

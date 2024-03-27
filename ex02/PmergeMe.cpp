@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/27 09:14:12 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:50:41 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include <iomanip>
 
 PmergeMe::PmergeMe() : _pending(0) {}
+
+PmergeMe::~PmergeMe() {}
 
 void PmergeMe::init(int ac, char **av)
 {
@@ -254,6 +256,6 @@ void PmergeMe::print_data()
         std::cout << this->_ordered_d[i] << " ";
     }
     std::cout << std::endl;
-    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::vector : " << this->_v_end - this->_v_begin << " us" << std::endl;
-    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::deque : " << this->_d_end - this->_d_begin << " us" << std::endl;
+    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::vector : " <<this->_v_end - this->_v_begin << " us" << std::endl;
+    std::cout << "Time to process a range of "  << this->_list_size << " elements with std::deque : " <<this->_d_end - this->_d_begin << " us" << std::endl;
 }

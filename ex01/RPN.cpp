@@ -6,13 +6,15 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 23:08:49 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/22 23:02:21 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 15:02:41 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "RPN.hpp"
 
 #include <sstream>
+
+RPN::RPN() {}
 
 RPN::RPN(RPN const &that)
 {
@@ -24,6 +26,8 @@ RPN &RPN::operator=(RPN const &that)
     this->_stack = that.getStack();
     return *this;
 }
+
+RPN::~RPN() {}
 
 void RPN::run(std::string list)
 {
@@ -40,7 +44,7 @@ void RPN::run(std::string list)
             this->_stack.push(word[0] - '0');
         else
         {
-            if (this->_stack.size() == 1)
+            if (this->_stack.size() <= 1)
                 throw(std::invalid_argument("Error: Invalid argument."));
             a = this->_stack.top();
             this->_stack.pop();
