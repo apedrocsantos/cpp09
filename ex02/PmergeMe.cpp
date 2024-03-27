@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/18 21:08:42 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/25 17:51:46 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 09:14:12 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,16 @@ PmergeMe::PmergeMe() : _pending(0) {}
 
 void PmergeMe::init(int ac, char **av)
 {
-    std::clock_t start = std::clock();
     this->_d_begin = get_cur_time();
     get_list(ac, av, this->_deque, this->_ordered_d);
     this->_d_end = get_cur_time();
-    double _time = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
-    std::cout << "DEQUE OK: " << std::fixed << std::setprecision(5) << _time << " us\n";
     
-    start = std::clock();
     this->_v_begin = get_cur_time();
     get_list(ac, av, this->_vector, this->_ordered_v);
     this->_v_end = get_cur_time();
-    _time = static_cast<double>(std::clock() - start) / CLOCKS_PER_SEC;
-    std::cout << "VECTOR OK: " << std::fixed << std::setprecision(5) << _time << " us\n";
     
     print_data();
-    print_list(this->_ordered_v);
+    // print_list(this->_ordered_v);
 }
 
 template <typename T, typename U>
@@ -97,54 +91,14 @@ template <typename T>
 void PmergeMe::sort_pairs(T &container)
 {
     static int j = 1;
-    // std::cout << "j " << j << std::endl;
     if (container.size() <= 1 || j >= (int)container.size())
         return;
-    // if (j < container.size() && j + 1 != container.size() && container[j].second > container[j + 1].second)
-    // {
-    //     std::iter_swap(container[j], container[j + 1]);
-    //     if (j > 0)
-    //         j--;
-    // }
-    // else if (j < container.size())
-    //     j++;
-    // if (j < container.size() && j + 1 != container.size())
-    //     sort_pairs(container, j);
-
-    size_t i = 1;
-    for (i = 1; i < container.size() - 1; i++)
-    {
-        if (container[i].second > container[j].second) {
+    size_t i;
+    for (i = 0; i < container.size() - 1; i++)
+        if (container[i].second > container[j].second)
 			std::swap(container[i], container[j]);
-            std::cout << "swapping {" << container[i].first << "," << container[i].second << "} with {" << container[j].first << "," << container[j].second << "}\n";
-		}
-    }
     j++;
     sort_pairs(container);
-    // //Divide the vector into two halves
-    // std::deque<std::pair<unsigned int, unsigned int> > leftHalf(container.begin(), container.begin() + container.size() / 2);
-    // std::deque<std::pair<unsigned int, unsigned int> > rightHalf(container.begin() + container.size() / 2, container.end());
-
-    // // Recursively sort the two halves
-    // sort_pairs(leftHalf);
-    // sort_pairs(rightHalf);
-
-    // // Merge the sorted halves
-    // size_t leftIdx = 0;
-    // size_t rightIdx = 0;
-    // size_t idx = 0;
-
-    // while (leftIdx < leftHalf.size() && rightIdx < rightHalf.size()) {
-    //     container[idx++] = leftHalf[leftIdx].second < rightHalf[rightIdx].second ? leftHalf[leftIdx++] : rightHalf[rightIdx++];
-    // }
-
-    // while (leftIdx < leftHalf.size()) {
-    //     container[idx++] = leftHalf[leftIdx++];
-    // }
-
-    // while (rightIdx < rightHalf.size()) {
-    //     container[idx++] = rightHalf[rightIdx++];
-    // }
 }
 
 

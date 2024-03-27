@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:32 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/23 14:17:04 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 09:23:15 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ class BitcoinExchange
     int _year;
     int _month;
     int _day;
+    int _cur_year;
+    int _cur_month;
+    int _cur_day;
     float _value;
     std::string _date;
     std::vector<std::string> _lst;

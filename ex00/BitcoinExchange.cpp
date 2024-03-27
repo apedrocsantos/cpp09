@@ -6,7 +6,7 @@
 /*   By: anda-cun <anda-cun@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:21:30 by anda-cun          #+#    #+#             */
-/*   Updated: 2024/03/25 17:01:23 by anda-cun         ###   ########.fr       */
+/*   Updated: 2024/03/27 11:32:14 by anda-cun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@ BitcoinExchange::BitcoinExchange(std::string input)
     std::string line;
     std::ifstream infile;
     std::ifstream datafile;
+
+    time_t theTime = time(NULL);
+    struct tm *aTime = localtime(&theTime);
+    this->_cur_day = aTime->tm_mday;
+    this->_cur_month = aTime->tm_mon + 1;
+    this->_cur_year = aTime->tm_year + 1900;
     infile.open(input.c_str());
     datafile.open("data.csv");
     if (!infile || !datafile)
@@ -94,6 +100,8 @@ float BitcoinExchange::stof(std::string string, bool date)
         }
     }
     ss << string;
+    if (ss.fail())
+        throw(std::invalid_argument("Error: invalid number =>" + string));
     ss >> nb;
     while (string[i] && string[i] == ' ')
         i++;
@@ -105,11 +113,10 @@ float BitcoinExchange::stof(std::string string, bool date)
         throw(std::invalid_argument("Error: not a positive number."));
     if (nb == 0 && date)
     {
-        std::string error = "Error: bad input => " + this->_date;
-        throw(std::invalid_argument(error));
+        throw(std::invalid_argument("Error: bad input => " + this->_date));
     }
     if (nb == 0)
-        throw(std::invalid_argument("Error: invalid value."));
+        throw(std::invalid_argument("Error: bad input => " + string));
     return (nb);
 }
 
@@ -141,7 +148,8 @@ void BitcoinExchange::checkDate(std::string date)
         throw(std::invalid_argument(error));
     if (!ss.eof())
         throw(std::invalid_argument(error));
-    std::getline(ss, string, '-');
+    if (this->_year > this->_cur_year || (this->_year == this->_cur_year && this->_month > this->_cur_month) || (this->_year == this->_cur_year && this->_month == this->_cur_month && this->_day > this->_cur_day))
+        throw(std::invalid_argument(error));
 }
 
 void BitcoinExchange::checkValue(std::string value)
@@ -185,6 +193,8 @@ void BitcoinExchange::run()
                     std::cerr << e.what() << '\n';
                 }
             }
+            else
+                throw(std::invalid_argument("Error: bad input => " + this->_date));
         }
         catch(const std::exception& e)
         {
